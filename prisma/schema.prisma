@@ -11,7 +11,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db?mode=memory&cache=shared"
+  url      = "file:./database.sqlite"
 }
 
 model Movie {
