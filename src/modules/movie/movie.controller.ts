@@ -3,13 +3,11 @@ import { MovieService } from "./movie.service";
 
 @Controller('movies')
 export class MovieController{
-    constructor(private readonly movieService: MovieService) {
-
-    }
+    constructor(private readonly movieService: MovieService) {}
 
     @Get('/All')
-    async findAll(){
-        return this.movieService.moviesAll()
+    public async findAll(){
+        return this.movieService.findAll()
     }
 
     @Get('/PrizeInterval')

@@ -8,11 +8,11 @@ import { Movie } from "./interfaces/movie.dto";
 export class MovieService implements OnModuleInit {
     constructor(private readonly prisma: PrismaService) { }
 
-    async onModuleInit() {
+    async onModuleInit(): Promise<{ totalLidos: number; inseridos: number; mensagem: string }> {
         const movies: Movie[] = await loadMoviesFromCsv();
-        console.log("Quantidade de filmes no arquivo:", movies.length)
+        const totalLidos = movies.length;
 
-        let contadorMovies = 0
+        let contadorMovies = 0;
 
         for (const movie of movies) {
             const consultMovie = await this.prisma.movie.findFirst({
@@ -21,7 +21,7 @@ export class MovieService implements OnModuleInit {
                     year: movie.year,
                     producers: movie.producers,
                 },
-            })
+            });
 
             if (!consultMovie) {
                 await this.prisma.movie.create({
@@ -30,20 +30,29 @@ export class MovieService implements OnModuleInit {
                         year: movie.year,
                         studios: movie.studios,
                         producers: movie.producers,
-                        winner: movie.winner
-                    }
-                })
-                contadorMovies++
+                        winner: movie.winner,
+                    },
+                });
+                contadorMovies++;
             }
         }
-        if (contadorMovies == 0) {
-            console.log("Nem um filme novo foi encontrado, todos os filmes desse arquivo já estão cadastrados")
-        } else {
-            console.log(`Importação finalizada, ${contadorMovies} foram inseridos na base!`)
-        }
+
+        const mensagem =
+            contadorMovies === 0
+                ? 'Nenhum filme novo foi encontrado, todos já estavam cadastrados.'
+                : `Importação finalizada. ${contadorMovies} filmes foram inseridos.`
+
+        console.log(mensagem);
+
+        return {
+            totalLidos,
+            inseridos: contadorMovies,
+            mensagem,
+        };
     }
 
-    async moviesAll(): Promise<Movie[]> {
+
+    public async findAll(): Promise<Movie[]> {
         return await this.prisma.movie.findMany()
     }
 
