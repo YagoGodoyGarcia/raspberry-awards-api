@@ -16,11 +16,13 @@ Este projeto consiste em uma API RESTful para leitura, processamento e exibiçã
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/raspberry-awards-api.git
+git clone https://github.com/YagoGodoyGarcia/raspberry-awards-api.git
 cd raspberry-awards-api
 
 # Instale as dependências
 npm install
+
+npx prisma generate
 
 # Rode a aplicação
 npm run start:dev
