@@ -9,14 +9,14 @@ import { PrizeIntervalResponseDto } from "./dto/prize-interval-response.dto";
 export class MovieController {
     constructor(private readonly movieService: MovieService) { }
 
-    @Get('/All')
+    @Get('/all')
     @ApiOperation({ summary: 'Retorna todos os filmes' })
     @ApiResponse({ status: 200, type: MovieDto, isArray: true })
     public async findAll() {
         return this.movieService.findAll()
     }
 
-    @Get('/PrizeInterval')
+    @Get('/prizeInterval')
     @ApiOperation({ summary: 'Produtores com maior e menor intervalo entre prêmios' })
     @ApiResponse({
         status: 200,
