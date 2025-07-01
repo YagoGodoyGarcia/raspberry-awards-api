@@ -37,8 +37,8 @@ npm run start:dev
 
 | Método | Rota                    | Descrição                                                               |
 |--------|-------------------------|-------------------------------------------------------------------------|
-| GET    | `/movies/All`           | Retorna todos os filmes cadastrados.                                   |
-| GET    | `/movies/PrizeInterval` | Retorna produtores com **maior** e **menor** intervalo entre prêmios.  |
+| GET    | `/movies`           | Retorna todos os filmes cadastrados.                                   |
+| GET    | `/movies/prize-interval` | Retorna produtores com **maior** e **menor** intervalo entre prêmios.  |
 
 ---
 
