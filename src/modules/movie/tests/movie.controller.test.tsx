@@ -51,16 +51,27 @@ describe('MovieController', () => {
     });
 
     it('deve importar filmes e retornar resumo da operação', async () => {
-      const mockMovies = {
-        totalLidos: 1,
-        inseridos: 1,
-        mensagem: 'Importação finalizada. 206 filmes foram inseridos.',
-      };
+      const mockMovies = [
+        {
+          title: 'Mock Movie 1',
+          year: 2000,
+          studios: 'Studio A',
+          producers: 'Producer A',
+          winner: true,
+        },
+        {
+          title: 'Mock Movie 2',
+          year: 2001,
+          studios: 'Studio B',
+          producers: 'Producer B',
+          winner: false,
+        },
+      ];
 
       const mockPrisma = {
         movie: {
-          findFirst: jest.fn().mockResolvedValue(null), // Simula que não existe
-          create: jest.fn().mockResolvedValue({}),
+          findMany: jest.fn().mockResolvedValue(mockMovies), // Simula que não existe
+          createMany: jest.fn().mockResolvedValue(mockMovies),
         },
       };
 
@@ -75,7 +86,7 @@ describe('MovieController', () => {
         mensagem: 'Importação finalizada. 206 filmes foram inseridos.',
       });
 
-      expect(mockPrisma.movie.create).toHaveBeenCalledTimes(206);
+      expect(mockPrisma.movie.createMany).toHaveBeenCalledTimes(1);
     });
   });
 
