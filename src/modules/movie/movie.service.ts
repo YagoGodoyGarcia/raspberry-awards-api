@@ -3,6 +3,7 @@ import { PrismaService } from "src/database/prisma.service";
 import { loadMoviesFromCsv } from "./utils/csv-loader";
 import { ImportResultDTO, Movie } from "./interfaces/movie.dto";
 import MovieDto from "./dto/movie.dto";
+import { title } from "process";
 
 
 @Injectable()
@@ -11,40 +12,28 @@ export class MovieService implements OnModuleInit {
 
     async onModuleInit(): Promise<ImportResultDTO> {
         try {
-            const movies: Movie[] = await loadMoviesFromCsv();
+            const movies: Movie[] = await this.loadMoviesFromCsv();
             const totalLidos = movies.length;
 
-            let inseridos = 0;
+            const newMovies = await this.filterNewMovies(movies)
+            const inseridos = newMovies.length;
 
-            for (const movie of movies) {
-                const consultMovie = await this.prisma.movie.findFirst({
-                    where: {
+            if (newMovies.length > 0) {
+                await this.prisma.movie.createMany({
+                    data: newMovies.map((movie) => ({
                         title: movie.title,
                         year: movie.year,
+                        studios: movie.studios,
                         producers: movie.producers,
-                    },
-                });
-
-                if (!consultMovie) {
-                    await this.prisma.movie.create({
-                        data: {
-                            title: movie.title,
-                            year: movie.year,
-                            studios: movie.studios,
-                            producers: movie.producers,
-                            winner: movie.winner,
-                        },
-                    });
-                    inseridos++;
-                }
+                        winner: movie.winner,
+                    })),
+                    //skipDuplicates: true as never, // evita duplicacao de dados caso o banco de dados usado suportar
+                })
             }
 
-            const mensagem =
-                inseridos === 0
-                    ? 'Nenhum filme novo foi encontrado, todos já estavam cadastrados.'
-                    : `Importação finalizada. ${inseridos} filmes foram inseridos.`
+            const mensagem = this.generateImportMessage(inseridos)
+            console.log(mensagem)
 
-            console.log(mensagem);
             return {
                 totalLidos,
                 inseridos,
@@ -52,11 +41,41 @@ export class MovieService implements OnModuleInit {
             };
         } catch (error) {
             console.error('Erro ao importar filmes:', error);
-            throw error; 
+            throw new Error(`Falha na importação de filmes: ${error.message}`);
         }
     }
 
+    private async loadMoviesFromCsv(): Promise<Movie[]> {
+        return loadMoviesFromCsv(); // Supondo que já existe
+    }
 
+    private async filterNewMovies(movies: Movie[]): Promise<Movie[]> {
+
+        //Consulta filmes existentes buscando por titulo e ano
+        const existingMovies = await this.prisma.movie.findMany({
+            select: {
+                title: true,
+                year: true,
+            }
+        })
+
+        //criar id unico para cada filme existente
+        const existingKey = new Set(
+            existingMovies.map((movie) => `${movie.title}|${movie.year}`)
+        )
+
+        //Filtrar e retornar novos filmes nao cadastrados 
+        const newMovies = movies.filter(
+            (movie) => !existingKey.has(`${movie.title}|${movie.year}`)
+        )
+        return newMovies
+    }
+
+    private generateImportMessage(inseridos: number): string {
+        return inseridos === 0
+            ? 'Nenhum filme novo foi encontrado, todos já estavam cadastrados.'
+            : `Importação finalizada. ${inseridos} filmes foram inseridos.`;
+    }
     public async findAll(): Promise<MovieDto[]> {
         return await this.prisma.movie.findMany()
     }
