@@ -13,9 +13,11 @@ export class MovieService implements OnModuleInit {
         const movies: Movie[] = await loadMoviesFromCsv();
         const totalLidos = movies.length;
 
-        let contadorMovies = 0;
+        let inseridos = 0;
 
         for (const movie of movies) {
+
+            //validar caso de processamento onde o producers pode ser um array e validar possiveis erros
             const consultMovie = await this.prisma.movie.findFirst({
                 where: {
                     title: movie.title,
@@ -34,20 +36,20 @@ export class MovieService implements OnModuleInit {
                         winner: movie.winner,
                     },
                 });
-                contadorMovies++;
+                inseridos++;
             }
         }
 
         const mensagem =
-            contadorMovies === 0
+            inseridos === 0
                 ? 'Nenhum filme novo foi encontrado, todos já estavam cadastrados.'
-                : `Importação finalizada. ${contadorMovies} filmes foram inseridos.`
+                : `Importação finalizada. ${inseridos} filmes foram inseridos.`
 
         console.log(mensagem);
 
         return {
             totalLidos,
-            inseridos: contadorMovies,
+            inseridos,
             mensagem,
         };
     }
