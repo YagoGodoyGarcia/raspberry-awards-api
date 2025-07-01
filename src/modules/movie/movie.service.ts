@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from "@nestjs/common";
 import { PrismaService } from "src/database/prisma.service";
 import { loadMoviesFromCsv } from "./utils/csv-loader";
 import { Movie } from "./interfaces/movie.dto";
+import MovieDto from "./dto/movie.dto";
 
 
 @Injectable()
@@ -52,7 +53,7 @@ export class MovieService implements OnModuleInit {
     }
 
 
-    public async findAll(): Promise<Movie[]> {
+    public async findAll(): Promise<MovieDto[]> {
         return await this.prisma.movie.findMany()
     }
 

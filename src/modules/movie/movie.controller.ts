@@ -1,6 +1,6 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, HttpCode } from "@nestjs/common";
 import { MovieService } from "./movie.service";
-import { ApiAcceptedResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import MovieDto from "./dto/movie.dto";
 import { PrizeIntervalResponseDto } from "./dto/prize-interval-response.dto";
 
@@ -9,21 +9,23 @@ import { PrizeIntervalResponseDto } from "./dto/prize-interval-response.dto";
 export class MovieController {
     constructor(private readonly movieService: MovieService) { }
 
-    @Get('/all')
-    @ApiOperation({ summary: 'Retorna todos os filmes' })
-    @ApiResponse({ status: 200, type: MovieDto, isArray: true })
-    public async findAll() {
+    @Get('/')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Listar todos os filmes' })
+    @ApiResponse({ status: 200, description: 'Lista completa de filmes', type: MovieDto, isArray: true })
+    public async findAll(): Promise<MovieDto[]> {
         return this.movieService.findAll()
     }
 
-    @Get('/prizeInterval')
-    @ApiOperation({ summary: 'Produtores com maior e menor intervalo entre prêmios' })
+    @Get('prize-interval')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Retorna produtores com maior e menor intervalo entre prêmios' })
     @ApiResponse({
         status: 200,
-        description: 'Intervalo mínimo e máximo entre prêmios por produtor',
+        description: 'Intervalo mínimo e máximo entre vitórias por produtor',
         type: PrizeIntervalResponseDto,
     })
-    async prizeInterval() {
+    async prizeInterval(): Promise<PrizeIntervalResponseDto>{
         return this.movieService.longestPrizeInterval()
     }
 }
