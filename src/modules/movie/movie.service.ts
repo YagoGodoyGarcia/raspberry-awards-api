@@ -10,45 +10,50 @@ export class MovieService implements OnModuleInit {
     constructor(private readonly prisma: PrismaService) { }
 
     async onModuleInit(): Promise<ImportResultDTO> {
-        const movies: Movie[] = await loadMoviesFromCsv();
-        const totalLidos = movies.length;
+        try {
+            const movies: Movie[] = await loadMoviesFromCsv();
+            const totalLidos = movies.length;
 
-        let inseridos = 0;
+            let inseridos = 0;
 
-        for (const movie of movies) {
-            const consultMovie = await this.prisma.movie.findFirst({
-                where: {
-                    title: movie.title,
-                    year: movie.year,
-                    producers: movie.producers,
-                },
-            });
-
-            if (!consultMovie) {
-                await this.prisma.movie.create({
-                    data: {
+            for (const movie of movies) {
+                const consultMovie = await this.prisma.movie.findFirst({
+                    where: {
                         title: movie.title,
                         year: movie.year,
-                        studios: movie.studios,
                         producers: movie.producers,
-                        winner: movie.winner,
                     },
                 });
-                inseridos++;
+
+                if (!consultMovie) {
+                    await this.prisma.movie.create({
+                        data: {
+                            title: movie.title,
+                            year: movie.year,
+                            studios: movie.studios,
+                            producers: movie.producers,
+                            winner: movie.winner,
+                        },
+                    });
+                    inseridos++;
+                }
             }
+
+            const mensagem =
+                inseridos === 0
+                    ? 'Nenhum filme novo foi encontrado, todos já estavam cadastrados.'
+                    : `Importação finalizada. ${inseridos} filmes foram inseridos.`
+
+            console.log(mensagem);
+            return {
+                totalLidos,
+                inseridos,
+                mensagem,
+            };
+        } catch (error) {
+            console.error('Erro ao importar filmes:', error);
+            throw error; 
         }
-
-        const mensagem =
-            inseridos === 0
-                ? 'Nenhum filme novo foi encontrado, todos já estavam cadastrados.'
-                : `Importação finalizada. ${inseridos} filmes foram inseridos.`
-
-        console.log(mensagem);
-        return {
-            totalLidos,
-            inseridos,
-            mensagem,
-        };
     }
 
 
