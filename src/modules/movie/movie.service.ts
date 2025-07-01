@@ -12,8 +12,11 @@ export class MovieService implements OnModuleInit {
 
     async onModuleInit(): Promise<ImportResultDTO> {
         try {
+
             const movies: Movie[] = await this.loadMoviesFromCsv();
             const totalLidos = movies.length;
+
+            this.validateMovies(movies);
 
             const newMovies = await this.filterNewMovies(movies)
             const inseridos = newMovies.length;
@@ -45,8 +48,17 @@ export class MovieService implements OnModuleInit {
         }
     }
 
+    //validar dados de entrada
+    private validateMovies(movies: Movie[]): void {
+        movies.map((movie, index) => {
+            if(!movie.title || !movie.year){
+                throw new Error(`Filme inválido na linha ${index + 1}: título ou ano ausente.`)
+            }
+        })
+    }    
+
     private async loadMoviesFromCsv(): Promise<Movie[]> {
-        return loadMoviesFromCsv(); // Supondo que já existe
+        return loadMoviesFromCsv();
     }
 
     private async filterNewMovies(movies: Movie[]): Promise<Movie[]> {
