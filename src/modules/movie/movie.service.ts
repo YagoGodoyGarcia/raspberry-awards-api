@@ -16,8 +16,6 @@ export class MovieService implements OnModuleInit {
         let inseridos = 0;
 
         for (const movie of movies) {
-
-            //validar caso de processamento onde o producers pode ser um array e validar possiveis erros
             const consultMovie = await this.prisma.movie.findFirst({
                 where: {
                     title: movie.title,
@@ -46,7 +44,6 @@ export class MovieService implements OnModuleInit {
                 : `Importação finalizada. ${inseridos} filmes foram inseridos.`
 
         console.log(mensagem);
-
         return {
             totalLidos,
             inseridos,
