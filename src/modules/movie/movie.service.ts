@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { PrismaService } from "src/database/prisma.service";
 import { loadMoviesFromCsv } from "./utils/csv-loader";
-import { Movie } from "./interfaces/movie.dto";
+import { ImportResultDTO, Movie } from "./interfaces/movie.dto";
 import MovieDto from "./dto/movie.dto";
 
 
@@ -9,7 +9,7 @@ import MovieDto from "./dto/movie.dto";
 export class MovieService implements OnModuleInit {
     constructor(private readonly prisma: PrismaService) { }
 
-    async onModuleInit(): Promise<{ totalLidos: number; inseridos: number; mensagem: string }> {
+    async onModuleInit(): Promise<ImportResultDTO> {
         const movies: Movie[] = await loadMoviesFromCsv();
         const totalLidos = movies.length;
 

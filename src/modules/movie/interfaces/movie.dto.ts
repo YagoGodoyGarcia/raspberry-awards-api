@@ -5,3 +5,9 @@ export interface Movie {
   producers: string;
   winner: boolean;
 }
+
+export interface ImportResultDTO {
+  totalLidos: number;
+  inseridos: number;
+  mensagem: string;
+}
