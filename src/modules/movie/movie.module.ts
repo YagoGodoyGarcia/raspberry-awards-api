@@ -3,12 +3,8 @@ import { MovieService } from "./movie.service";
 import { PrismaService } from "src/database/prisma.service";
 import { MovieController } from "./movie.controller";
 
-
-
 @Module({
     controllers: [MovieController],
     providers: [MovieService, PrismaService]
 })
-export class MovieModules{
-
-}
+export class MovieModule{}
