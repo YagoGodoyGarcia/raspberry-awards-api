@@ -5,7 +5,7 @@ import { AppModule } from 'src/app.module';
 import { PrismaService } from 'src/database/prisma.service';
 import { MovieService } from '../movie.service';
 
-describe('Movies prize inteval', () => {
+describe('Movies', () => {
   let app: INestApplication;
   let prisma: PrismaService;
 
