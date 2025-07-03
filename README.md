@@ -27,6 +27,8 @@ npm install
 # 3. Gere os arquivos do Prisma
 npx prisma generate
 
+npx prisma db push
+
 # 4. Execute a API em modo desenvolvimento
 npm run start:dev
 ```
