@@ -88,6 +88,7 @@ describe('MovieController', () => {
 
       expect(mockPrisma.movie.createMany).toHaveBeenCalledTimes(1);
     });
+    
   });
 
 });
